@@ -10,13 +10,20 @@ const getMinSide = () => {
   return Math.min(width, height)
 }
 
-
+const difficulties = [
+  { id: 0, label: "Facile", map: {x: 10, y: 10}, bombs: 10 },
+  { id: 1, label: "Moyen", map: {x: 15, y: 15}, bombs: 30 },
+  { id: 2, label: "Difficile", map: {x: 20, y: 20}, bombs: 80 },
+  { id: 3, label: "Diabolique", map: {x: 25, y: 25}, bombs: 150 },
+]
 
 const Gameboard = () => {
   
   const [sideOfMinefield, setSideOfMinefield] = useState(getMinSide)
-
-
+  const [currentDifficulty, setCurrentDifficulty] = useState(0)
+  const handleChangeDifficulty = (difficulty) => {
+    setCurrentDifficulty(difficulty)
+  }
 
   //hook for automatic resizing
   useEffect(() => {
@@ -37,8 +44,13 @@ const Gameboard = () => {
         gridTemplateColumns: "1fr",
         gridTemplateRows: "100px 1fr"
       }}>
-      <ScoreGame />
-      <Minefield />
+      <ScoreGame 
+        difficulties= {difficulties}
+        handleChangeDifficulty= {handleChangeDifficulty}
+      />
+      <Minefield
+        difficulty= {difficulties[currentDifficulty]}
+       />
     </div>
   )
 }

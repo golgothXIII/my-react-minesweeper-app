@@ -1,15 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Difficulty = () => {
+const Difficulty = ( { difficulties, handleChangeDifficulty }) => {
+  const [difficultyChoose, setDifficultyChoose] = useState(0)
+  const handleChange = (event) => {
+    setDifficultyChoose(event.target.value)
+    handleChangeDifficulty(event.target.value)
+  }
+
+
   return (
     <select 
         id="difficulty"
-        
+        value= {difficultyChoose}  
+        onChange={handleChange}
     >
-      <option key="125" value="1" >Facile</option>
-      <option key="126" value="2" >Moyen</option>
-      <option key="127" value="3" >Difficile</option>
-      <option key="128" value="4" >Demoniaque</option>
+      { difficulties.map( (difficulty) => {
+          return <option key={Math.random() * 100} value={difficulty.id} >{difficulty.label}</option>
+        })}
     </select>
   )
 }
