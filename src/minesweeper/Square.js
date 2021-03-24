@@ -13,7 +13,8 @@ import mine from './images/mine.svg'
 import flag from './images/flag.svg'
 
 const images = [ zero, one, two, three, four, five, six, seven, eight, nine ]
-const Square = ( { id, trapped, bombsAround } ) => {
+
+const Square = ( { id, trapped, bombsAround, handleClickReturn, handleContextMenuReturn } ) => {
   const [isClicked, setIsClicked] = useState(false)
   const [isMarked, setIsMarked] = useState(false)
   const [isTrapped, setIsTrapped] = useState(trapped)
@@ -34,15 +35,28 @@ const Square = ( { id, trapped, bombsAround } ) => {
     backgroundImage = (isMarked) ? `url(${flag})` : `url()`
   }  
 
-  const handleClick = () => {
+  const handleClick = (event) => {
     if ( ! isMarked ) {
       setIsClicked(true)
+      handleClickReturn(event.target.id)
     }
+
+    // ici il faut appeller la fonction de retour pour remonté l'info a Minefield.
+
   }
   const handleContextMenu = event => {
     event.preventDefault()
     if ( ! isClicked ) {
-      setIsMarked(! isMarked)
+      var valReturn = isMarked ? -1 : 1
+      console.log("isMarked", isMarked)
+      console.log("valReturn", valReturn)
+      setIsMarked(! isMarked )
+      console.log("isMarked", isMarked)
+      console.log("valReturn", valReturn)
+      console.log("---------------------")
+
+//      handleContextMenuReturn(valReturn)
+
     }
   }
 
