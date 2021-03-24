@@ -11,53 +11,45 @@ import eight from './images/eight.svg'
 import nine from './images/nine.svg'
 import mine from './images/mine.svg'
 import flag from './images/flag.svg'
+import store from '../store'
 
 const images = [ zero, one, two, three, four, five, six, seven, eight, nine ]
 
 const Square = ( { id, trapped, bombsAround, handleClickReturn, handleContextMenuReturn } ) => {
-  const [isClicked, setIsClicked] = useState(false)
-  const [isMarked, setIsMarked] = useState(false)
-  const [isTrapped, setIsTrapped] = useState(trapped)
+  const [reRender, setReRender] = useState(1)  
   
   var backgroundColor
-  var border
   var borderStyle
   var backgroundImage
-  if (isClicked) {
+  if (store.getState().grid[id].isClicked) {
     backgroundColor = "#615F57"
-    border = "#999999 2px"
     borderStyle = "inset"
-    backgroundImage = (isTrapped) ? `url(${mine})` : `url(${images[bombsAround]})`
+    backgroundImage = (store.getState().grid[id].isTrapped) ? `url(${mine})` : `url(${images[store.getState().grid[id].bombsAround]})`
   } else {
     backgroundColor = "#504e46"
-    border = "#999999 2px"
     borderStyle = "outset"
-    backgroundImage = (isMarked) ? `url(${flag})` : `url()`
+    backgroundImage = (store.getState().grid[id].isMarked) ? `url(${flag})` : `url()`
   }  
 
   const handleClick = (event) => {
-    if ( ! isMarked ) {
-      setIsClicked(true)
-      handleClickReturn(event.target.id)
+    if (! store.getState().grid[id].isClicked && ! store.getState().grid[id].isMarked) {
+      store.dispatch( {
+        type: 'CLICK',
+        payload: { id }
+        })
+        setReRender( -reRender )
     }
-
-    // ici il faut appeller la fonction de retour pour remonté l'info a Minefield.
-
   }
+  
   const handleContextMenu = event => {
     event.preventDefault()
-    if ( ! isClicked ) {
-      var valReturn = isMarked ? -1 : 1
-      console.log("isMarked", isMarked)
-      console.log("valReturn", valReturn)
-      setIsMarked(! isMarked )
-      console.log("isMarked", isMarked)
-      console.log("valReturn", valReturn)
-      console.log("---------------------")
-
-//      handleContextMenuReturn(valReturn)
-
+    if ( ! store.getState().grid[id].isClicked ) {
+      store.dispatch( {
+        type: 'CONTEXT_MENU',
+        payload: { id }
+      })
     }
+    setReRender( -reRender )
   }
 
   return (
@@ -65,7 +57,7 @@ const Square = ( { id, trapped, bombsAround, handleClickReturn, handleContextMen
       id= {id}
       style= {{
         backgroundColor,
-        border,
+        border: "#999999 2px",
         borderStyle,
         borderRadius: "5px",
         backgroundImage,

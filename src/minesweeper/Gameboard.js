@@ -11,10 +11,10 @@ const getMinSide = () => {
 }
 
 const difficulties = [
-  { id: 0, label: "Facile", map: {x: 10, y: 10}, bombs: 10 },
-  { id: 1, label: "Moyen", map: {x: 15, y: 15}, bombs: 30 },
-  { id: 2, label: "Difficile", map: {x: 20, y: 20}, bombs: 80 },
-  { id: 3, label: "Diabolique", map: {x: 25, y: 25}, bombs: 150 },
+  { id: 0, label: "Facile", grid: {x: 10, y: 10}, bombs: 10 },
+  { id: 1, label: "Moyen", grid: {x: 15, y: 15}, bombs: 30 },
+  { id: 2, label: "Difficile", grid: {x: 20, y: 20}, bombs: 80 },
+  { id: 3, label: "Diabolique", grid: {x: 25, y: 25}, bombs: 150 },
 ]
 
 const Gameboard = () => {
