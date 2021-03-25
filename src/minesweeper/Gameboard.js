@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import store from '../store'
 import Minefield from './Minefield'
+import Modal from './Modal'
 import ScoreGame from './ScoreGame'
 
 // function return 
@@ -27,12 +29,20 @@ const Gameboard = () => {
     return () => { window.removeEventListener('resize', () => { setSideOfMinefield(getMinSide)}) }
   })
 
-  const handleContextMenu = () => {
+  const handleClick = () => {
     setReRender(-reRender)
   }
+  const handleClickNewGame = () => {
+    store.dispatch( {
+      type: 'UPDATE_DIFFICULTY',
+      payload: { difficulty: store.getState().difficulty }
+    })
+    setReRender(-reRender)
 
+  }
 
   return (
+    <>
     <div
       style= {{
         width: sideOfMinefield + "px",
@@ -41,15 +51,17 @@ const Gameboard = () => {
         margin: "20px",
         display: "grid",
         gridTemplateColumns: "1fr",
-        gridTemplateRows: "100px 1fr"
-      }}>
+        gridTemplateRows: "100px 1fr"      }}>
       <ScoreGame 
         handleChangeDifficulty= {handleChangeDifficulty}
       />
       <Minefield 
-        handleContextMenuReturn= { handleContextMenu }
+        handleClickReturn = {handleClick}
+        handleContextMenuReturn= { handleClick }
       />
     </div>
+    { store.getState().result ? <Modal handleClick={ handleClickNewGame } /> : null }
+    </>
   )
 }
 

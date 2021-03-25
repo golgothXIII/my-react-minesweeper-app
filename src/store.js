@@ -1,3 +1,4 @@
+import { act } from 'react-dom/test-utils'
 import { createStore } from 'redux'
 
 const difficulties = [
@@ -8,6 +9,18 @@ const difficulties = [
 ]
 
 const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], difficulties }, action ) => {
+  // Function return if the player win
+  // we win if the number of boxes clicked plus the number of boxes marked is equal to the total number of boxes.
+  const isWin = () => {
+    var countSquarre = 0
+    state.grid.map( ( square ) => {
+      countSquarre += square.isClicked ? 1 : square.isMarked ? 1 : 0
+      return 0
+    })
+    console.log(state.width * state.height, countSquarre)
+    return ( countSquarre === state.width * state.height ) ? true : false
+  }
+
   switch(action.type) {
     /* case where the user change difficulty and for init
        PAYLOAD :
@@ -44,7 +57,6 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
               }
             }
           }
-  
           squares.push({
             key: suffix + id,
             id,
@@ -60,17 +72,55 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
         difficulty: action.payload.difficulty,
         width: thisDifficulty.grid.x,
         height: thisDifficulty.grid.y,
+        result: 0,
         grid: [...squares],
         difficulties
       }
+    case 'CLICK' :
+      if (state.result != 0) {
+        return state
+      }
+      // if the squarre is trapped it's the end of game
+      if (state.grid[action.payload.id].isTrapped) {
+          state.result = -1
+          state.grid[action.payload.id].isClicked = true
+          return { ...state }
+      }
 
+      // Recursive function to propagate the click
+      const spreadClick = ( index, grid) => {
+        // stop recursivity if the square is allready unveiled or Marqued.
+        if (grid[index].isClicked || grid[index].isMarked) return grid
 
-      case 'CLICK' :
-        state.grid[action.payload.id].isClicked = ! state.grid[action.payload.id].isClicked
-        return { ...state }
+        // unveiled the square 
+        grid[index].isClicked = true
+
+        // stop recursivity if the square has at least one bomb around.
+        if (grid[index].bombsAround > 0 ) return grid
+
+        // Otherwise, test all the squares around with the same function
+        const x = grid[index].pos.x
+        const y = grid[index].pos.y
+        for (var i = x - 1; i <= x + 1; i++){
+          for (var j = y - 1; j <= y + 1; j++) {
+            // if square is in the grid, we check if this square is trapped
+              if ( i > 0 && j > 0 && i <= state.width && j <= state.height && ( i !== x || j !== y ) ) {
+                grid = spreadClick(j * state.height + ( -state.width + i ) -1 , grid )
+            }
+          }
+        }
+        return grid
+      }
+      spreadClick(action.payload.id, state.grid)
+
+      if ( isWin() ) state.result = 1
+     
+      return { ...state }
+
       case 'CONTEXT_MENU' :
-        state.grid[action.payload.id].isMarked = ! state.grid[action.payload.id].isMarked
-        return { ...state }
+      state.grid[action.payload.id].isMarked = ! state.grid[action.payload.id].isMarked
+      if ( isWin() ) state.result = 1
+      return { ...state }
 
     default:
       return state

@@ -2,12 +2,10 @@ import React from 'react'
 import store from '../store'
 import Square from './Square'
 
-const Minefield = ( { handleContextMenuReturn } ) => {
+const Minefield = ( { handleClickReturn, handleContextMenuReturn } ) => {
 
   const handleClick = ( id ) => {
-    console.log("id ==>", id)
-    // ici il faut faire la propagation, du click
-
+    handleClickReturn()
   }
   const handleContextMenu = () => {
     handleContextMenuReturn()

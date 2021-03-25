@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import zero from './images/zero.svg'
+import zero from './images/blank.svg'
 import one from './images/one.svg'
 import two from './images/two.svg'
 import three from './images/three.svg'
@@ -17,34 +17,41 @@ const images = [ zero, one, two, three, four, five, six, seven, eight, nine ]
 
 const Square = ( { id, handleClickReturn, handleContextMenuReturn } ) => {
   const [reRender, setReRender] = useState(1)  
-  
+  const myState = store.getState()
   var backgroundColor
   var borderStyle
   var backgroundImage
-  if (store.getState().grid[id].isClicked) {
+  if (myState.grid[id].isClicked) {
     backgroundColor = "#615F57"
     borderStyle = "inset"
-    backgroundImage = (store.getState().grid[id].isTrapped) ? `url(${mine})` : `url(${images[store.getState().grid[id].bombsAround]})`
+    backgroundImage = (myState.grid[id].isTrapped) ? `url(${mine})` : `url(${images[myState.grid[id].bombsAround]})`
   } else {
     backgroundColor = "#504e46"
     borderStyle = "outset"
-    backgroundImage = (store.getState().grid[id].isMarked) ? `url(${flag})` : `url()`
+    backgroundImage = (myState.grid[id].isMarked) ? `url(${flag})` : `url()`
   }  
 
   const handleClick = (event) => {
-    if (! store.getState().grid[id].isClicked && ! store.getState().grid[id].isMarked) {
+//    if (! myState.grid[id].isClicked && ! myState.grid[id].isMarked) {
       store.dispatch( {
         type: 'CLICK',
         payload: { id }
         })
-        setReRender( -reRender )
-    }
+      setReRender( -reRender )
+//    }
     handleClickReturn(id)
   }
   
   const handleContextMenu = event => {
     event.preventDefault()
-    if ( ! store.getState().grid[id].isClicked ) {
+
+    var flagCount = myState.difficulties[myState.difficulty].bombs
+    myState.grid.map( square => {
+      flagCount -= square.isMarked ? 1 : 0
+      return null
+    })
+  
+    if ( ! myState.grid[id].isClicked && ( flagCount > 0 ||  myState.grid[id].isMarked ) ) {
       store.dispatch( {
         type: 'CONTEXT_MENU',
         payload: { id }
