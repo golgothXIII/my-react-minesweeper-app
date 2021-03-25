@@ -1,12 +1,25 @@
 import { createStore } from 'redux'
 
-const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [] }, action ) => {
+const difficulties = [
+  { label: "Facile", grid: {x: 10, y: 10}, bombs: 10 },
+  { label: "Moyen", grid: {x: 15, y: 15}, bombs: 30 },
+  { label: "Difficile", grid: {x: 20, y: 20}, bombs: 80 },
+  { label: "Diabolique", grid: {x: 25, y: 25}, bombs: 150 },
+]
+
+const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], difficulties }, action ) => {
   switch(action.type) {
+    /* case where the user change difficulty and for init
+       PAYLOAD :
+        - difficulty : numbers refere id difficulties
+    */
     case 'UPDATE_DIFFICULTY' :
+      // the new difficulty
+      const thisDifficulty = state.difficulties[action.payload.difficulty]
       // create bombs position.
       var bombs = []
-      for (let i = 0; i < action.payload.bombs; i++) {
-        const pos = Math.ceil (Math.random() * action.payload.size.x * action.payload.size.y )
+      for (let i = 0; i < thisDifficulty.bombs; i++) {
+        const pos = Math.ceil (Math.random() * thisDifficulty.grid.x * thisDifficulty.grid.y )
         if ( bombs.indexOf( pos ) === -1) { 
           bombs.push(pos)
         } else {
@@ -16,17 +29,17 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [] }, ac
       // Create minefield
       const squares = []
       const suffix = Math.floor( Math.random() * Math.pow(2, 16)).toString(16)
-      for (var y=1; y<=action.payload.size.y; y++) {
-        for (var x = 1; x <= action.payload.size.x; x++) {
-          const id = y * action.payload.size.y + -action.payload.size.x + x - 1
+      for (var y=1; y<=thisDifficulty.grid.y; y++) {
+        for (var x = 1; x <= thisDifficulty.grid.x; x++) {
+          const id = y * thisDifficulty.grid.y + -thisDifficulty.grid.x + x - 1
 
           // init param bombsAround square
           var bombsAround = 0
           for (var i = x - 1; i <= x + 1; i++){
             for (var j = y - 1; j <= y + 1; j++) {
-              if ( i > 0 && j > 0 && i <= action.payload.size.x && j <= action.payload.size.y && ( i !== x || j !== y ) ) {
+              if ( i > 0 && j > 0 && i <= thisDifficulty.grid.x && j <= thisDifficulty.grid.y && ( i !== x || j !== y ) ) {
                 // if square is in the grid, we check if the index of array of bombs
-                const index = j * action.payload.size.y - action.payload.size.x + i - 1
+                const index = j * thisDifficulty.grid.y - thisDifficulty.grid.x + i - 1
                 bombsAround += bombs.indexOf(index) !== -1 ? 1 : 0
               }
             }
@@ -45,10 +58,12 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [] }, ac
       }
       return {
         difficulty: action.payload.difficulty,
-        width: action.payload.size.x,
-        height: action.payload.size.y,
-        grid: [...squares]
+        width: thisDifficulty.grid.x,
+        height: thisDifficulty.grid.y,
+        grid: [...squares],
+        difficulties
       }
+
 
       case 'CLICK' :
         state.grid[action.payload.id].isClicked = ! state.grid[action.payload.id].isClicked
@@ -69,13 +84,7 @@ store.subscribe( () =>  {})
 // Init the minefield to easy mode
 store.dispatch( {
   type: 'UPDATE_DIFFICULTY',
-  payload: {
-    difficulty: 0,
-    size: { x: 10, y: 10 },
-    bombs: 10
-  }
+  payload: { difficulty: 0 }
 })
 
-
-console.log(store.getState())
 export default store

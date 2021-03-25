@@ -1,7 +1,9 @@
 import React from 'react'
 import Difficulty from './Difficulty'
+import FlagCount from './FlagCount'
 
 const ScoreGame = ( { difficulties, handleChangeDifficulty } ) => {
+
   return (
     <div
       style= {{
@@ -19,8 +21,8 @@ const ScoreGame = ( { difficulties, handleChangeDifficulty } ) => {
           handleChangeDifficulty= {handleChangeDifficulty}
         />
         </div>
-      <div></div>
-      <div></div>
+      <FlagCount />
+      <div>time</div>
     </div>
   )
 }

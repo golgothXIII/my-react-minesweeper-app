@@ -15,7 +15,7 @@ import store from '../store'
 
 const images = [ zero, one, two, three, four, five, six, seven, eight, nine ]
 
-const Square = ( { id, trapped, bombsAround, handleClickReturn, handleContextMenuReturn } ) => {
+const Square = ( { id, handleClickReturn, handleContextMenuReturn } ) => {
   const [reRender, setReRender] = useState(1)  
   
   var backgroundColor
@@ -39,6 +39,7 @@ const Square = ( { id, trapped, bombsAround, handleClickReturn, handleContextMen
         })
         setReRender( -reRender )
     }
+    handleClickReturn(id)
   }
   
   const handleContextMenu = event => {
@@ -50,6 +51,7 @@ const Square = ( { id, trapped, bombsAround, handleClickReturn, handleContextMen
       })
     }
     setReRender( -reRender )
+    handleContextMenuReturn(id)
   }
 
   return (

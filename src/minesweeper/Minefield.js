@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import store from '../store'
 import Square from './Square'
 
-const Minefield = ( { difficulty }) => {
+const Minefield = ( { handleContextMenuReturn } ) => {
 
-  const [currentDifficulty, setCurrentDifficulty] = useState(difficulty)  
-  if (currentDifficulty.id !== difficulty.id) {
-    setCurrentDifficulty(difficulty)
-//    setMinefield(initMineFieldGrid)
+  const handleClick = ( id ) => {
+    console.log("id ==>", id)
+    // ici il faut faire la propagation, du click
+
+  }
+  const handleContextMenu = () => {
+    handleContextMenuReturn()
   }
 
-  const handleClick = () => {}
-  const handleContextMenu = () =>{}
   const gridTemplateColumns= `repeat( ${store.getState().width}, 1fr)`
   const gridTemplateRows= `repeat( ${store.getState().height}, 1fr)`
 
