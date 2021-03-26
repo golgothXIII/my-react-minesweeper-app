@@ -17,7 +17,6 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
       countSquarre += square.isClicked ? 1 : square.isMarked ? 1 : 0
       return 0
     })
-    console.log(state.width * state.height, countSquarre)
     return ( countSquarre === state.width * state.height ) ? true : false
   }
 
@@ -73,16 +72,18 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
         width: thisDifficulty.grid.x,
         height: thisDifficulty.grid.y,
         result: 0,
+        stopWatch: false,
         grid: [...squares],
         difficulties
       }
     case 'CLICK' :
-      if (state.result != 0) {
+      if (state.result !== 0) {
         return state
       }
       // if the squarre is trapped it's the end of game
-      if (state.grid[action.payload.id].isTrapped) {
+      if (state.grid[action.payload.id].isTrapped && ! state.grid[action.payload.id].isMarked) {
           state.result = -1
+          state.stopWatch = false
           state.grid[action.payload.id].isClicked = true
           return { ...state }
       }
@@ -112,14 +113,21 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
         return grid
       }
       spreadClick(action.payload.id, state.grid)
+      state.stopWatch = true
 
-      if ( isWin() ) state.result = 1
-     
+      if ( isWin() ) {
+        state.result = 1
+        state.stopWatch = false
+      }
+
       return { ...state }
 
       case 'CONTEXT_MENU' :
       state.grid[action.payload.id].isMarked = ! state.grid[action.payload.id].isMarked
-      if ( isWin() ) state.result = 1
+      if ( isWin() ) {
+        state.result = 1
+        state.stopWatch = false
+      }
       return { ...state }
 
     default:

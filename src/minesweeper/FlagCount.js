@@ -23,13 +23,13 @@ const FlagCount = () => {
     return null
   })
 
-  const hundred = Math.floor( flagCount / 100 )
-  const ten = Math.floor ( ( flagCount - hundred * 100 )  / 10 )
-  const unit = flagCount - hundred * 100  - ten * 10
+  const hundred = flagCount > 99  ? parseInt( flagCount.toString().substr(-3,1), 10 ) : 0
+  const ten = flagCount > 9  ? parseInt( flagCount.toString().substr(-2,1), 10 ) : 0 
+  const unit = parseInt( flagCount.toString().substr(-1,1), 10 )
 
   return (
     <div>
-      <img src={flag} alt="Drapau" height="37px"/>&nbsp;&nbsp;
+      <img src={flag} alt="Drapeau" height="37px"/>&nbsp;&nbsp;
       <img src={images[hundred]} alt="Centaines" />
       <img src={images[ten]} alt="Dizaines" />
       <img src={images[unit]} alt="Unités" />
