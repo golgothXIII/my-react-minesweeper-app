@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react'
 import store from '../store'
 import Minefield from './Minefield'
 import Modal from './Modal'
-import ScoreGame from './ScoreGame'
-
-// function return 
-const getMinSide = () => {
-  //remove margin and the height of the menu board
-  const width = window.innerWidth - 40
-  const height = window.innerHeight - (40 + 100)
-  return Math.min(width, height)
-}
+import Dashboard from './Dashboard'
 
 const Gameboard = () => {
   
+  // function return screen size
+  const getMinSide = () => {
+    //remove margin and the height of the menu board
+    const width = window.innerWidth - 40
+    const height = window.innerHeight - (40 + 100)
+    return Math.min(width, height)
+  }
+
   const [sideOfMinefield, setSideOfMinefield] = useState(getMinSide)
 
   const [reRender, setReRender] = useState(1)  
@@ -34,13 +34,12 @@ const Gameboard = () => {
   }
   const handleClickNewGame = () => {
     store.dispatch( {
-      type: 'UPDATE_DIFFICULTY',
-      payload: { difficulty: store.getState().difficulty }
+      type: 'INIT_MINEFIELD',
+      payload: { difficulty: store.getState().minefield.difficulty }
     })
     setReRender(-reRender)
 
   }
-
   return (
     <>
     <div
@@ -52,15 +51,15 @@ const Gameboard = () => {
         display: "grid",
         gridTemplateColumns: "1fr",
         gridTemplateRows: "100px 1fr"      }}>
-      <ScoreGame 
+      <Dashboard 
         handleChangeDifficulty= {handleChangeDifficulty}
       />
       <Minefield 
         handleClickReturn = {handleClick}
         handleContextMenuReturn= { handleClick }
       />
+    { store.getState().minefield.result !== 0  ? <Modal handleClick={ handleClickNewGame } /> : null }
     </div>
-    { store.getState().result ? <Modal handleClick={ handleClickNewGame } /> : null }
     </>
   )
 }

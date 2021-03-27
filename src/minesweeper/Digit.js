@@ -23,7 +23,7 @@ import nineWhite from './images/nineWhite.svg'
 
 
 
-const Digit = ( { digit, isColored, useBlankForZero }) => {
+const Digit = ( { digit, isColored, useBlankForZero, style }) => {
 
   const images = {
     colored: [ useBlankForZero ? blank : zero, one, two, three, four, five, six, seven, eight, nine ],
@@ -32,7 +32,7 @@ const Digit = ( { digit, isColored, useBlankForZero }) => {
   return (
     <div 
     style= {{
-      display: "inline"
+      display: "inline",
     }}>
       <img src={ isColored ? images.colored[digit] : images.white[digit] } alt="chiffre " />
     </div>

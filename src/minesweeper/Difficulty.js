@@ -5,7 +5,7 @@ const Difficulty = ( { handleChangeDifficulty } ) => {
   const [difficultyChoose, setDifficultyChoose] = useState(0)
   const handleChange = (event) => {
     store.dispatch( {
-      type: 'UPDATE_DIFFICULTY',
+      type: 'INIT_MINEFIELD',
       payload: { difficulty: event.target.value }
     })
     setDifficultyChoose(event.target.value)
@@ -15,13 +15,18 @@ const Difficulty = ( { handleChangeDifficulty } ) => {
 
   return (
     <select 
-        id="difficulty"
-        value= {difficultyChoose}  
-        onChange={handleChange}
+      style= {{
+        borderRadius: "10px",
+        padding: "5px 20px 5px 20px",
+        backgroundColor: "#838179",
+      }}
+      id="difficulty"
+      value= {difficultyChoose}  
+      onChange={handleChange}
     >
       { store.getState().difficulties.map( (difficulty, index) => {
-          return <option key={Math.random() * 100} value={index} >{difficulty.label}</option>
-        })}
+        return <option key={Math.random() * 100} value={index} >{difficulty.label}</option>
+      })}
     </select>
   )
 }

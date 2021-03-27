@@ -1,23 +1,34 @@
-import { act } from 'react-dom/test-utils'
 import { createStore } from 'redux'
 
-const difficulties = [
+const timerInitialState = { value: 0, isRunning: false}
+const minefieldInitialState = { 
+  difficulty: 0, 
+  width: 0,
+  height: 0,
+  result: 0,
+  grid: []
+ }
+ const difficulties = [
   { label: "Facile", grid: {x: 10, y: 10}, bombs: 10 },
   { label: "Moyen", grid: {x: 15, y: 15}, bombs: 30 },
   { label: "Difficile", grid: {x: 20, y: 20}, bombs: 80 },
   { label: "Diabolique", grid: {x: 25, y: 25}, bombs: 150 },
 ]
 
-const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], difficulties }, action ) => {
+const gameReducer = ( state = { minefield: minefieldInitialState, difficulties, timer: timerInitialState }, action ) => {
+  const minefieldState = state.minefield
+  const difficultiesState = state.difficulties
+  const timerState = state.timer
+
   // Function return if the player win
   // we win if the number of boxes clicked plus the number of boxes marked is equal to the total number of boxes.
   const isWin = () => {
     var countSquarre = 0
-    state.grid.map( ( square ) => {
+    minefieldState.grid.map( ( square ) => {
       countSquarre += square.isClicked ? 1 : square.isMarked ? 1 : 0
       return 0
     })
-    return ( countSquarre === state.width * state.height ) ? true : false
+    return ( countSquarre === minefieldState.width * minefieldState.height ) ? true : false
   }
 
   switch(action.type) {
@@ -25,9 +36,9 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
        PAYLOAD :
         - difficulty : numbers refere id difficulties
     */
-    case 'UPDATE_DIFFICULTY' :
+    case 'INIT_MINEFIELD' :
       // the new difficulty
-      const thisDifficulty = state.difficulties[action.payload.difficulty]
+      const thisDifficulty = difficultiesState[action.payload.difficulty]
       // create bombs position.
       var bombs = []
       for (let i = 0; i < thisDifficulty.bombs; i++) {
@@ -68,80 +79,103 @@ const minefield = ( state = { difficulty: 0, width: 0, height: 0, grid: [], diff
         }
       }
       return {
-        difficulty: action.payload.difficulty,
-        width: thisDifficulty.grid.x,
-        height: thisDifficulty.grid.y,
-        result: 0,
-        stopWatch: false,
-        grid: [...squares],
-        difficulties
+        minefield : {
+          difficulty: action.payload.difficulty,
+          width: thisDifficulty.grid.x,
+          height: thisDifficulty.grid.y,
+          result: 0,
+          grid: [...squares]
+        },
+        difficulties: difficultiesState,
+        timer: timerState
+
       }
     case 'CLICK' :
-      if (state.result !== 0) {
-        return state
-      }
-      // if the squarre is trapped it's the end of game
-      if (state.grid[action.payload.id].isTrapped && ! state.grid[action.payload.id].isMarked) {
-          state.result = -1
-          state.stopWatch = false
-          state.grid[action.payload.id].isClicked = true
-          return { ...state }
-      }
 
-      // Recursive function to propagate the click
-      const spreadClick = ( index, grid) => {
-        // stop recursivity if the square is allready unveiled or Marqued.
-        if (grid[index].isClicked || grid[index].isMarked) return grid
-
-        // unveiled the square 
-        grid[index].isClicked = true
-
-        // stop recursivity if the square has at least one bomb around.
-        if (grid[index].bombsAround > 0 ) return grid
-
-        // Otherwise, test all the squares around with the same function
-        const x = grid[index].pos.x
-        const y = grid[index].pos.y
-        for (var i = x - 1; i <= x + 1; i++){
-          for (var j = y - 1; j <= y + 1; j++) {
-            // if square is in the grid, we check if this square is trapped
-              if ( i > 0 && j > 0 && i <= state.width && j <= state.height && ( i !== x || j !== y ) ) {
-                grid = spreadClick(j * state.height + ( -state.width + i ) -1 , grid )
+      if (minefieldState.result === 0) {
+        // if the squarre is trapped it's the end of game
+        if (minefieldState.grid[action.payload.id].isTrapped && ! minefieldState.grid[action.payload.id].isMarked) {
+            minefieldState.result = -1
+            timerState.isRunning = false
+            minefieldState.grid[action.payload.id].isClicked = true
+            state = { 
+              minefield: minefieldState,
+              difficulties: difficultiesState,
+              timer: timerState
             }
+        } else {
+
+          // Recursive function to propagate the click
+          const spreadClick = ( index, grid) => {
+            // stop recursivity if the square is allready unveiled or Marqued.
+            if (grid[index].isClicked || grid[index].isMarked) return grid
+
+            // unveiled the square 
+            grid[index].isClicked = true
+
+            // stop recursivity if the square has at least one bomb around.
+            if (grid[index].bombsAround > 0 ) return grid
+
+            // Otherwise, test all the squares around with the same function
+            const x = grid[index].pos.x
+            const y = grid[index].pos.y
+            for (var i = x - 1; i <= x + 1; i++){
+              for (var j = y - 1; j <= y + 1; j++) {
+                // if square is in the grid, we check if this square is trapped
+                  if ( i > 0 && j > 0 && i <= minefieldState.width && j <= minefieldState.height && ( i !== x || j !== y ) ) {
+                    grid = spreadClick(j * minefieldState.height + ( -minefieldState.width + i ) -1 , grid )
+                }
+              }
+            }
+            return grid
+          }
+          spreadClick(action.payload.id, minefieldState.grid)
+
+          if ( isWin() ) {
+            minefieldState.result = 1
+            timerState.isRunning = false
+          } else {
+            timerState.isRunning = true
+          }
+
+          state = { 
+            minefield: minefieldState,
+            difficulties: difficultiesState,
+            timer: timerState
           }
         }
-        return grid
       }
-      spreadClick(action.payload.id, state.grid)
-      state.stopWatch = true
+      return state
 
+    case 'CONTEXT_MENU' :
+      minefieldState.grid[action.payload.id].isMarked = ! minefieldState.grid[action.payload.id].isMarked
       if ( isWin() ) {
-        state.result = 1
-        state.stopWatch = false
+        minefieldState.result = 1
+        timerState.isRunning = false
       }
+      return { 
+        minefield: minefieldState,
+        difficulties: difficultiesState,
+        timer: timerState
+       }
 
-      return { ...state }
-
-      case 'CONTEXT_MENU' :
-      state.grid[action.payload.id].isMarked = ! state.grid[action.payload.id].isMarked
-      if ( isWin() ) {
-        state.result = 1
-        state.stopWatch = false
-      }
-      return { ...state }
+// Timer case
+  case 'SET_TIMER' :
+    state.timer.value = action.payload
+    return state
 
     default:
       return state
   }
 }
 
-const store = createStore(minefield)
+const store = createStore(gameReducer)
 
 store.subscribe( () =>  {})
 
 // Init the minefield to easy mode
 store.dispatch( {
-  type: 'UPDATE_DIFFICULTY',
+  type: 'INIT_MINEFIELD',
   payload: { difficulty: 0 }
 })
 

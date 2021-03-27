@@ -4,15 +4,16 @@ import Square from './Square'
 
 const Minefield = ( { handleClickReturn, handleContextMenuReturn } ) => {
 
+  const minefieldState = store.getState().minefield
   const handleClick = ( id ) => {
-    handleClickReturn()
+    handleClickReturn(id)
   }
   const handleContextMenu = () => {
     handleContextMenuReturn()
   }
 
-  const gridTemplateColumns= `repeat( ${store.getState().width}, 1fr)`
-  const gridTemplateRows= `repeat( ${store.getState().height}, 1fr)`
+  const gridTemplateColumns= `repeat( ${minefieldState.width}, minmax(20px,1fr) )`
+  const gridTemplateRows= `repeat( ${minefieldState.height}, minmax(20px,1fr) )`
 
   return (
     <div
@@ -24,7 +25,7 @@ const Minefield = ( { handleClickReturn, handleContextMenuReturn } ) => {
     
       }}
     >
-      { store.getState().grid.map ( (square, index) => {
+      { minefieldState.grid.map ( (square, index) => {
         return <Square
           id={square.id}
           key={square.key}

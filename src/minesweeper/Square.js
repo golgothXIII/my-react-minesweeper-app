@@ -16,48 +16,46 @@ import store from '../store'
 const images = [ zero, one, two, three, four, five, six, seven, eight, nine ]
 
 const Square = ( { id, handleClickReturn, handleContextMenuReturn } ) => {
-  const [reRender, setReRender] = useState(1)  
-  const myState = store.getState()
+  const minefieldState = store.getState().minefield
+  const difficultiesState = store.getState().difficulties
   var backgroundColor
   var borderStyle
   var backgroundImage
-  if (myState.grid[id].isClicked) {
+
+  
+  if (minefieldState.grid[id].isClicked) {
     backgroundColor = "#615F57"
     borderStyle = "inset"
-    backgroundImage = (myState.grid[id].isTrapped) ? `url(${mine})` : `url(${images[myState.grid[id].bombsAround]})`
+    backgroundImage = (minefieldState.grid[id].isTrapped) ? `url(${mine})` : `url(${images[minefieldState.grid[id].bombsAround]})`
   } else {
     backgroundColor = "#504e46"
     borderStyle = "outset"
-    backgroundImage = (myState.grid[id].isMarked) ? `url(${flag})` : `url()`
+    backgroundImage = (minefieldState.grid[id].isMarked) ? `url(${flag})` : `url()`
   }  
 
   const handleClick = (event) => {
-//    if (! myState.grid[id].isClicked && ! myState.grid[id].isMarked) {
-      store.dispatch( {
-        type: 'CLICK',
-        payload: { id }
-        })
-      setReRender( -reRender )
-//    }
-    handleClickReturn(id)
+    store.dispatch( {
+      type: 'CLICK',
+      payload: { id }
+      })
+    handleClickReturn()
   }
   
   const handleContextMenu = event => {
     event.preventDefault()
 
-    var flagCount = myState.difficulties[myState.difficulty].bombs
-    myState.grid.map( square => {
+    var flagCount = difficultiesState[minefieldState.difficulty].bombs
+    minefieldState.grid.map( square => {
       flagCount -= square.isMarked ? 1 : 0
       return null
     })
   
-    if ( ! myState.grid[id].isClicked && ( flagCount > 0 ||  myState.grid[id].isMarked ) ) {
+    if ( ! minefieldState.grid[id].isClicked && ( flagCount > 0 ||  minefieldState.grid[id].isMarked ) ) {
       store.dispatch( {
         type: 'CONTEXT_MENU',
         payload: { id }
       })
     }
-    setReRender( -reRender )
     handleContextMenuReturn(id)
   }
 
@@ -72,7 +70,7 @@ const Square = ( { id, handleClickReturn, handleContextMenuReturn } ) => {
         backgroundImage,
         backgroundSize: "50%",
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
       }}
       onClick= {handleClick}
       onContextMenu= {handleContextMenu}

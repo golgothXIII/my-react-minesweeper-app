@@ -1,12 +1,9 @@
 import React, { useState } from 'react'
 import Difficulty from './Difficulty'
 import FlagCount from './FlagCount'
-import StopWatch from './StopWatch'
+import Stopwatch from './Stopwatch'
 
-const ScoreGame = ( { difficulties, handleChangeDifficulty } ) => {
-
-  
-
+const Dashboard = ( { difficulties, handleChangeDifficulty } ) => {
 
   return (
     <div
@@ -16,7 +13,7 @@ const ScoreGame = ( { difficulties, handleChangeDifficulty } ) => {
         borderRadius: "10px",
         backgroundColor: "#393d45",
         display: "grid",
-        gridTemplateColumns: "minmax(100px, 1fr) minmax(150px, 3fr) minmax(100px, 1fr)",
+        gridTemplateColumns: "minmax(100px, 1fr) minmax(150px, 3fr) minmax(130px, 1fr)",
         alignItems: "center"
       }}
     >
@@ -27,9 +24,9 @@ const ScoreGame = ( { difficulties, handleChangeDifficulty } ) => {
         />
         </div>
       <FlagCount />
-      <StopWatch />
+      <Stopwatch />
     </div>
   )
 }
 
-export default ScoreGame
+export default Dashboard
