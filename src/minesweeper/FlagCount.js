@@ -20,7 +20,9 @@ const FlagCount = () => {
       <Digit
         digit= { flagCount > 99  ? parseInt( flagCount.toString().substr(-3,1), 10 ) : 0 }
         isColored= {false}
-        useBlankForZero= {true}      
+        useBlankForZero= {true}
+        style= {{
+        }}    
       />
       <Digit
         digit= { flagCount > 9  ? parseInt( flagCount.toString().substr(-2,1), 10 ) : 0 }

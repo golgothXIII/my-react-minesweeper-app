@@ -32,9 +32,9 @@ const Digit = ( { digit, isColored, useBlankForZero, style }) => {
   return (
     <div 
     style= {{
-      display: "inline",
+      display: "inline"
     }}>
-      <img src={ isColored ? images.colored[digit] : images.white[digit] } alt="chiffre " />
+      <img src={ isColored ? images.colored[digit] : images.white[digit] } alt="chiffre" />
     </div>
   )
 }

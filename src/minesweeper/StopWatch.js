@@ -14,7 +14,7 @@ const Stopwatch = () => {
     setStopwatch(stopwatch + 1 )
     store.dispatch( {
       type: 'SET_TIMER',
-      payload: { stopwatch }
+      payload: stopwatch 
     })    
     } else if (timerState.value !== 0 && stopwatch !== 0) {
       setStopwatch(0)
@@ -28,21 +28,34 @@ const Stopwatch = () => {
         digit= { stopwatch > 999  ? parseInt( stopwatch.toString().substr(-4,1), 10 ) : 0 }
         isColored= {false}
         useBlankForZero= {true}
+        style= {{
+          display: "inline"
+        }}    
+
       />
       <Digit 
         digit= { stopwatch > 99  ? parseInt( stopwatch.toString().substr(-3,1), 10 ) : 0}
         isColored= {false}
         useBlankForZero= {false}
+        style= {{
+          display: "inline"
+        }}    
       />
       <Digit 
         digit= {stopwatch > 9  ? parseInt( stopwatch.toString().substr(-2,1), 10 ) : 0}
         isColored= {false}
         useBlankForZero= {false}
+        style= {{
+          display: "inline"
+        }}    
       />
       <Digit 
         digit= {parseInt( stopwatch.toString().substr(-1,1), 10 )}
         isColored= {false}
         useBlankForZero= {false}
+        style= {{
+          display: "inline"
+        }}    
       />
     </div>
   )

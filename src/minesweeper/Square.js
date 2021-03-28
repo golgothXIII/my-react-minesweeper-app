@@ -12,6 +12,7 @@ import nine from './images/nine.svg'
 import mine from './images/mine.svg'
 import flag from './images/flag.svg'
 import store from '../store'
+import Digit from './Digit'
 
 const images = [ zero, one, two, three, four, five, six, seven, eight, nine ]
 
