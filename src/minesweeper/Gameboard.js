@@ -5,6 +5,11 @@ import Modal from './Modal'
 import Dashboard from './Dashboard'
 
 const Gameboard = () => {
+  const [sideOfMinefield, setSideOfMinefield] = useState(getMinSide)
+  const [reRender, setReRender] = useState(1)  
+  const handleChangeDifficulty = (difficulty) => {
+    setReRender(-reRender)
+  }
   
   // function return screen size
   const getMinSide = () => {
@@ -12,13 +17,6 @@ const Gameboard = () => {
     const width = window.innerWidth - 40
     const height = window.innerHeight - (40 + 100)
     return Math.min(width, height)
-  }
-
-  const [sideOfMinefield, setSideOfMinefield] = useState(getMinSide)
-
-  const [reRender, setReRender] = useState(1)  
-  const handleChangeDifficulty = (difficulty) => {
-    setReRender(-reRender)
   }
 
   //hook for automatic resizing
