@@ -5,12 +5,6 @@ import Modal from './Modal'
 import Dashboard from './Dashboard'
 
 const Gameboard = () => {
-  const [sideOfMinefield, setSideOfMinefield] = useState(getMinSide)
-  const [reRender, setReRender] = useState(1)  
-  const handleChangeDifficulty = (difficulty) => {
-    setReRender(-reRender)
-  }
-  
   // function return screen size
   const getMinSide = () => {
     //remove margin and the height of the menu board
@@ -19,6 +13,12 @@ const Gameboard = () => {
     return Math.min(width, height)
   }
 
+  const [sideOfMinefield, setSideOfMinefield] = useState(getMinSide)
+  const [reRender, setReRender] = useState(1)  
+  const handleChangeDifficulty = (difficulty) => {
+    setReRender(-reRender)
+  }
+  
   //hook for automatic resizing
   useEffect(() => {
     // when resizing screen update de sideOfMineField
